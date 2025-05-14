@@ -15,10 +15,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install Rust
-        uses: actions/setup-rust@v1
-        with:
-          rust-version: stable
+      - name: Install Rust (for safety)
+        run: rustup update stable
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -26,15 +24,11 @@ jobs:
           node-version: '20'
 
       - name: Install tuono CLI
-        run: cargo install tuono-cli
+        run: cargo install tuono
 
       - name: Install JS dependencies
         run: npm install
-
-      - name: Build dev version (check compilation)
-        run: tuono dev --no-open &
-        continue-on-error: true  # Runs in background, useful for verifying it compiles
-
+        
       - name: Build production assets
         run: tuono build
 
