@@ -1,4 +1,4 @@
-name: Tuono App Deployment
+name: Tuono Static Build
 
 on:
   push:
@@ -7,30 +7,34 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
-
+  build-static:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Install Rust (for safety)
-        run: rustup update stable
+      - name: Set up Rust
+        uses: actions/setup-rust@v1
+        with:
+          rust-version: stable
 
-      - name: Install Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      - name: Install tuono CLI
-        run: cargo install tuono
+      - name: Install Tuono CLI
+        run: cargo install tuono-cli
 
-      - name: Install JS dependencies
+      - name: Install npm dependencies
         run: npm install
-        
-      - name: Build production assets
+
+      - name: Build static site
         run: tuono build
 
-      - name: Run production server
-        run: cargo run --release
+      - name: Upload static site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tuono-static-site
+          path: out/
