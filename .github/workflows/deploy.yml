@@ -14,10 +14,8 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Set up Rust
-        uses: actions/setup-rust@v1
-        with:
-          rust-version: stable
+      - name: Install Rust (for safety)
+        run: rustup update stable
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
