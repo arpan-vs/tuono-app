@@ -1,0 +1,43 @@
+name: Tuono App Deployment
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Rust
+        uses: actions/setup-rust@v1
+        with:
+          rust-version: stable
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install tuono CLI
+        run: cargo install tuono-cli
+
+      - name: Install JS dependencies
+        run: npm install
+
+      - name: Build dev version (check compilation)
+        run: tuono dev --no-open &
+        continue-on-error: true  # Runs in background, useful for verifying it compiles
+
+      - name: Build production assets
+        run: tuono build
+
+      - name: Run production server
+        run: cargo run --release &
+        continue-on-error: true
